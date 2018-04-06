@@ -1,0 +1,23 @@
+{
+  "name": "get-spotify-artist-id",
+  "version": "1.0.0",
+  "description": "Node script for getting artist id from Spotify using YAML front matter from a directory of files.",
+  "main": "index.js",
+  "dependencies": {
+    "front-matter": "^2.3.0",
+    "meow": "^4.0.0",
+    "node-spotify-api": "^1.0.7",
+    "ora": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lightergrey/get-spotify-artist-id.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/lightergrey/get-spotify-artist-id"
+}
