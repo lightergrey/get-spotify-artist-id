@@ -1,32 +1,32 @@
 module.exports = (query, response) => {
-  let formatted = {};
 
-  if (response === undefined || response.error) {
-    const { error: { error, message } } = response || { error: 'undefined', message: 'undefined'};
-    formatted[query] = { error, message };
-    return formatted;
+  if (response === undefined) {
+    return {
+      [query]: { error: { status: "Undefined", message: "Undefined" } }
+    };
   }
 
-  const { artists: { items } } = response;
+  if (response.error) {
+    const {
+      error: { error: { status = "undefined", message = "undefined" } }
+    } = response;
+    return { [query]: { error: { status, message } } };
+  }
+
+  const { artists: { items = [] } } = response;
 
   if (items.length === 0) {
-    formatted[query] = { error: "No matches found for query." };
-    return formatted;
+    return { [query]: { error: "No matches found for query." } };
   }
 
-  if (items.length > 0) {
-    const item =
-      items.find(item => item.name.toLowerCase() === query.toLowerCase()) ||
-      items[0];
-    const alternates = items.map(item => formatValidItem(item));
+  const { name, id } =
+    items.find(item => item.name.toLowerCase() === query.toLowerCase()) ||
+    items[0];
 
-    formatted[query] = formatValidItem(item, alternates);
-  }
+  const alternates = items.map(item => {
+    const { name, id } = item;
+    return { id, name };
+  });
 
-  return formatted;
-};
-
-const formatValidItem = (item, alternates) => {
-  const { name, id } = item;
-  return { id, name, alternates };
+  return { [query]: { id, name, alternates } };
 };

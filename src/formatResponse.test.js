@@ -106,3 +106,17 @@ test("formats an error", () => {
   };
   expect(formatResponse(query, response)).toEqual(expected);
 });
+
+test("handles undefined response", () => {
+    const query = "Andrew W.K.";
+    const response = undefined;
+    const expected = {
+        "Andrew W.K.": {
+            error: {
+                status: 'Undefined',
+                message: 'Undefined'
+            }
+        }
+    };
+    expect(formatResponse(query, response)).toEqual(expected);
+});
