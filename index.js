@@ -22,12 +22,6 @@ const promiseSerial = fns =>
     Promise.resolve([])
   );
 
-const arrayToObject = array =>
-  array.reduce((obj, item) => {
-    obj[item.query] = item.data;
-    return obj;
-  }, {});
-
 const initialize = async () => {
   if (!spotifyClientId) {
     spotifyClientId = await promptly.prompt("Spotify Client ID: ");
@@ -89,7 +83,6 @@ const initialize = async () => {
       );
       searchSpinner.succeed("File saved.");
     } catch (e) {
-      console.log(e);
       searchSpinner.fail(`Error: ${e}`);
     }
   }
