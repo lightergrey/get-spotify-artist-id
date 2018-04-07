@@ -23,10 +23,10 @@ const promiseSerial = fns =>
   );
 
 const arrayToObject = array =>
-    array.reduce((obj, item) => {
-        obj[item.query] = item.data;
-        return obj;
-    }, {});
+  array.reduce((obj, item) => {
+    obj[item.query] = item.data;
+    return obj;
+  }, {});
 
 const initialize = async () => {
   if (!spotifyClientId) {
@@ -66,18 +66,31 @@ const initialize = async () => {
     const directory = await promptly.prompt("Directory: ", {
       default: "./test/"
     });
+    const outputPath = await promptly.prompt("Output path: ", {
+      default: "./artists.json"
+    });
+    const searchSpinner = ora("Searching").start();
     const tags = await getTagsFromFilesInDirectory(directory);
     const requests = tags.map(tag => () => {
-      return spotify.search({ type: "artist", query: tag });
+      return spotify
+        .search({
+          type: "artist",
+          query: '"' + tag.replace(/[“”‘’]/g, "") + '"'
+        })
+        .catch(e => console.log(`${tag}: ${e.error}`));
     });
     try {
       const responses = await promiseSerial(requests).then(data =>
         data.map((response, index) => formatResponse(tags[index], response))
       );
-      console.log(JSON.stringify(responses, null, 2));
-      fs.writeFile('./artists.json', JSON.stringify(Object.assign({}, ...responses), null, 2));
+      fs.writeFile(
+        outputPath,
+        JSON.stringify(Object.assign({}, ...responses), null, 2)
+      );
+      searchSpinner.succeed("File saved.");
     } catch (e) {
       console.log(e);
+      searchSpinner.fail(`Error: ${e}`);
     }
   }
 };

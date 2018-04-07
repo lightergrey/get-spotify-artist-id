@@ -1,8 +1,8 @@
 module.exports = (query, response) => {
   let formatted = {};
 
-  if (response.error) {
-    const { error: { error, message } } = response;
+  if (response === undefined || response.error) {
+    const { error: { error, message } } = response || { error: 'undefined', message: 'undefined'};
     formatted[query] = { error, message };
     return formatted;
   }
