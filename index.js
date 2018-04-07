@@ -1,5 +1,6 @@
 const formatResponse = require("./src/formatResponse");
 const getTagsFromFilesInDirectory = require("./src/getTagsFromFilesInDirectory");
+const fs = require("./src/fs-promise");
 const ora = require("ora");
 const promptly = require("promptly");
 const Spotify = require("node-spotify-api");
@@ -20,6 +21,12 @@ const promiseSerial = fns =>
       promise.then(result => fn().then(Array.prototype.concat.bind(result))),
     Promise.resolve([])
   );
+
+const arrayToObject = array =>
+    array.reduce((obj, item) => {
+        obj[item.query] = item.data;
+        return obj;
+    }, {});
 
 const initialize = async () => {
   if (!spotifyClientId) {
@@ -68,6 +75,7 @@ const initialize = async () => {
         data.map((response, index) => formatResponse(tags[index], response))
       );
       console.log(JSON.stringify(responses, null, 2));
+      fs.writeFile('./artists.json', JSON.stringify(Object.assign({}, ...responses), null, 2));
     } catch (e) {
       console.log(e);
     }
